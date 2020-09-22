@@ -1,6 +1,7 @@
 package com.share.fast.advice;
 
 
+import com.alibaba.fastjson.JSON;
 import com.share.fast.common.ResponseResult;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,8 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
+import java.util.Objects;
 
 /**
  * 响应切面
@@ -48,12 +51,22 @@ public class ResponseAdvice implements ResponseBodyAdvice{
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
                                   Class selectedConverterType, ServerHttpRequest request,
                                   ServerHttpResponse response) {
-        ResponseResult responseResult = ResponseResult.builder().
-                code(HttpStatus.OK.value()).
-                isSuccess(true).
-                msg("").
-                data(body).
-                build();
-        return responseResult;
+        //返回值为空
+        if(Objects.isNull(body)){
+            return ResponseResult.buildResponseResult(true,HttpStatus.OK.value(),"","");
+        }
+
+        //返回值为统一返回类型直接返回
+        if(body instanceof ResponseResult){
+            return body;
+        }
+
+        //因为handler处理类的返回类型是String，为了保证一致性，这里需要将ResponseResult转回去
+        if(body instanceof String) {
+            return JSON.toJSONString(ResponseResult.buildResponseResult(true,
+                    HttpStatus.OK.value(),"",body));
+        }
+
+        return ResponseResult.buildResponseResult(true,HttpStatus.OK.value(),"",body);
     }
 }

@@ -15,7 +15,7 @@ public class ResponseResult<T> {
     /**
      * 是否成功
     */
-    private Boolean isSuccess;
+    private Boolean success;
 
     /**
      * 响应码
@@ -31,4 +31,12 @@ public class ResponseResult<T> {
      * 返回内容
      */
     private T data;
+
+    /**
+     * 构建buildResponseResult
+    */
+    public static ResponseResult buildResponseResult(final Boolean success,final Integer code,
+                                                     final String msg,final Object data ){
+        return ResponseResult.builder().code(code).msg(msg).success(success).data(data).build();
+    }
 }
