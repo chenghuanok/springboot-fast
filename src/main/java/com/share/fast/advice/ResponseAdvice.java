@@ -3,13 +3,17 @@ package com.share.fast.advice;
 
 import com.alibaba.fastjson.JSON;
 import com.share.fast.common.ResponseResult;
+import com.share.fast.exception.BizException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 /**
@@ -17,6 +21,7 @@ import java.util.Objects;
  * @Author: chenghuan
  * @Date: 2020/9/21 21:23
  */
+@Slf4j
 @RestControllerAdvice
 public class ResponseAdvice implements ResponseBodyAdvice{
 
@@ -67,5 +72,30 @@ public class ResponseAdvice implements ResponseBodyAdvice{
         }
 
         return ResponseResult.buildResponseResult(true,HttpStatus.OK.value(),"",body);
+    }
+
+    /**
+     * 针对业务异常统一处理
+     * @param request
+     * @param e
+     * @return ResponseResult
+     */
+    @ExceptionHandler(BizException.class)
+    public ResponseResult<?> bizExceptionHandler(HttpServletRequest request, BizException e) {
+        log.error(e.getMsg(), e);
+        return ResponseResult.buildResponseResult(false,e.getCode(),e.getMsg(),"");
+    }
+
+    /**
+     * 服务器内部异常
+     * @param request
+     * @param e
+     * @return ResponseResult
+    */
+    @ExceptionHandler(Exception.class)
+    public ResponseResult<?> exceptionHandler(HttpServletRequest request, Exception e) {
+        log.error(e.getMessage(), e);
+        return ResponseResult.buildResponseResult(false,HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                e.getMessage(),"");
     }
 }
