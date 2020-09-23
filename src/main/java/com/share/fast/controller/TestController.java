@@ -46,7 +46,7 @@ public class TestController {
 
     @GetMapping("/test6")
     public ResponseResult test6(){
-       return ResponseResult.buildResponseResult(true, HttpStatus.OK.value(),"","111111");
+       return ResponseResult.success("111111");
     }
 
     @GetMapping("/test7")
@@ -62,6 +62,19 @@ public class TestController {
         if(true){
             throw new RuntimeException("异常处理");
         }
+        return 10;
+    }
+
+    @GetMapping("/test9")
+    public Integer test9() {
+        Integer.parseInt("abc123");
+        return 10;
+    }
+
+    @GetMapping("/test10")
+    public Integer test10() {
+        String str=null;
+        str.equals("111");
         return 10;
     }
 }

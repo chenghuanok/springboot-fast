@@ -2,6 +2,7 @@ package com.share.fast.common;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 
 /**
  * 统一返回值
@@ -33,10 +34,21 @@ public class ResponseResult<T> {
     private T data;
 
     /**
-     * 构建buildResponseResult
+     * 成功
+     * @param data
+     * @return ResponseResult
     */
-    public static ResponseResult buildResponseResult(final Boolean success,final Integer code,
-                                                     final String msg,final Object data ){
-        return ResponseResult.builder().code(code).msg(msg).success(success).data(data).build();
+    public static ResponseResult success(final Object data){
+        return ResponseResult.builder().code(HttpStatus.OK.value()).msg("").success(true).data(data).build();
+    }
+
+    /**
+     * 失败
+     * @param code
+     * @param msg
+     * @return ResponseResult
+     */
+    public static ResponseResult fail(final Integer code,final String msg){
+        return ResponseResult.builder().code(code).msg(msg).success(false).data("").build();
     }
 }

@@ -55,11 +55,6 @@ public class ResponseAdvice implements ResponseBodyAdvice{
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
                                   Class selectedConverterType, ServerHttpRequest request,
                                   ServerHttpResponse response) {
-        //返回值为空
-        if(Objects.isNull(body)){
-            return ResponseResult.buildResponseResult(true,HttpStatus.OK.value(),"","");
-        }
-
         //返回值为统一返回类型直接返回
         if(body instanceof ResponseResult){
             return body;
@@ -67,11 +62,10 @@ public class ResponseAdvice implements ResponseBodyAdvice{
 
         //因为handler处理类的返回类型是String，为了保证一致性，这里需要将ResponseResult转回去
         if(body instanceof String) {
-            return JSON.toJSONString(ResponseResult.buildResponseResult(true,
-                    HttpStatus.OK.value(),"",body));
+            return JSON.toJSONString(ResponseResult.success(body));
         }
 
-        return ResponseResult.buildResponseResult(true,HttpStatus.OK.value(),"",body);
+        return ResponseResult.success(body);
     }
 
     /**
@@ -83,11 +77,11 @@ public class ResponseAdvice implements ResponseBodyAdvice{
     @ExceptionHandler(BizException.class)
     public ResponseResult<?> bizExceptionHandler(HttpServletRequest request, BizException e) {
         log.error(e.getMsg(), e);
-        return ResponseResult.buildResponseResult(false,e.getCode(),e.getMsg(),"");
+        return ResponseResult.fail(e.getCode(),e.getMsg());
     }
 
     /**
-     * 服务器内部异常
+     * 其它异常处理
      * @param request
      * @param e
      * @return ResponseResult
@@ -95,7 +89,6 @@ public class ResponseAdvice implements ResponseBodyAdvice{
     @ExceptionHandler(Exception.class)
     public ResponseResult<?> exceptionHandler(HttpServletRequest request, Exception e) {
         log.error(e.getMessage(), e);
-        return ResponseResult.buildResponseResult(false,HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                e.getMessage(),"");
+        return ResponseResult.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(),e.getMessage());
     }
 }
