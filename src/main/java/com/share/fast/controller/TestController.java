@@ -3,8 +3,8 @@ package com.share.fast.controller;
 import com.share.fast.common.ResponseResult;
 import com.share.fast.common.User;
 import com.share.fast.exception.BizException;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/test")
 public class TestController {
+
+    @PostMapping("/login")
+    public String login(){
+        return "redirect:index.html";
+    }
 
     @GetMapping("/test1")
     public String test1(){
