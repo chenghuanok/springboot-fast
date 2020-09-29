@@ -1,5 +1,6 @@
 package com.share.fast.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +16,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    /**
+     * 异常拦截
+    */
+    @Autowired
+    private MyAccessDeniedHandler accessDeniedHandler;
 
     /**
      * 权限
@@ -35,9 +41,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 //放行，不需要认证
                 .antMatchers("/login.html").permitAll()
+                //基于用户权限
+                .antMatchers("/main1.html").hasAuthority("admiN")
+                //基于ip地址
+               // .antMatchers("/main1.html").hasIpAddress("123")
                 //剩下所有请求都必须认证才能访问，必须登录
                 .anyRequest().authenticated();
-        //关闭csrf
+        //异常处理
+        http.exceptionHandling().accessDeniedHandler(accessDeniedHandler);
+        //关闭csrf防护
         http.csrf().disable();
     }
 

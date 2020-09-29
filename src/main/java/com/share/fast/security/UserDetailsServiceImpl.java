@@ -48,7 +48,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         //比较密码，成功返回user(密码一般来自数据库，这里为了方便写死)
         final String password = passwordEncoder.encode("123");
         final User user = new User(username,password,
-                AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
+                AuthorityUtils.commaSeparatedStringToAuthorityList("admin,normal"));
         return user;
     }
 }
