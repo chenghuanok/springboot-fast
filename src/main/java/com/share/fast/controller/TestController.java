@@ -82,4 +82,9 @@ public class TestController {
         str.equals("111");
         return 10;
     }
+
+    @GetMapping("/test11")
+    public Integer test11() {
+        return 11;
+    }
 }
